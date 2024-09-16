@@ -1,5 +1,7 @@
+import 'package:employee_management_system/core/binding/app_binding.dart';
 import 'package:employee_management_system/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,12 +13,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      initialBinding: AppBinding(),
+      title: 'Empolyee Management System',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blueGrey,
+        appBarTheme: AppBarTheme(
+          color: Colors.blueGrey[900],
+        ),
       ),
-      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
   }
 }
