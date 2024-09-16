@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:employee_management_system/core/constants/label_constants.dart';
 import 'package:employee_management_system/screens/employee_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         EmployeeModel employeeModel = filteredRecords[index];
         log("$index. $employeeModel");
+
         return Padding(
           padding: EdgeInsets.only(
               left: 8.0,
@@ -101,14 +103,32 @@ class _HomeScreenState extends State<HomeScreen> {
                             employeeModel: employeeModel,
                           )));
             },
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundImage: employeeModel.avatar != null &&
-                      employeeModel.avatar!.isNotEmpty &&
-                      employeeModel.avatar != 'N/A' &&
-                      File(employeeModel.avatar!).existsSync()
-                  ? FileImage(File(employeeModel.avatar!)) as ImageProvider
-                  : const AssetImage('assets/images/profile.png'),
+            leading: FutureBuilder<bool>(
+              future: File(employeeModel.avatar!).exists(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasData && snapshot.data!) {
+                  return CircleAvatar(
+                    radius: 25,
+                    backgroundImage: FileImage(File(employeeModel.avatar!)),
+                  );
+                } else {
+                  return CircleAvatar(
+                    radius: 25,
+                    backgroundImage: employeeModel.avatar != null &&
+                            employeeModel.avatar!.isNotEmpty &&
+                            employeeModel.avatar != 'N/A'
+                        ? (employeeModel.avatar!.startsWith('http') ||
+                                employeeModel.avatar!.startsWith('https'))
+                            ? CachedNetworkImageProvider(employeeModel.avatar!)
+                                as ImageProvider
+                            : const AssetImage('assets/images/profile.png')
+                        : const AssetImage('assets/images/profile.png'),
+                  );
+                }
+              },
             ),
             title: Text(
               employeeModel.name!,
