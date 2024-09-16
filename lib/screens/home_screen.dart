@@ -19,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String searchTerm = '';
   TextEditingController textController = TextEditingController();
+  ScrollController scrollController = ScrollController();
   EmployeeController employeeController = Get.find();
   bool isLoading = true;
   bool isExpanded = false;
@@ -83,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return idMatch || nameMatch;
     }).toList();
     return ListView.builder(
+      controller: scrollController,
       itemCount: filteredRecords.length,
       itemBuilder: (context, index) {
         EmployeeModel employeeModel = filteredRecords[index];
